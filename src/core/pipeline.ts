@@ -10,7 +10,6 @@ interface PipelineDescriptor {
     targets?: GPUColorTargetState[];
     vertexBuffers?: GPUVertexBufferLayout[];
 }
-  
 
 class Pipeline {
 
