@@ -1,7 +1,7 @@
 import { Material } from './material';
 import { Pipeline } from '../core/pipeline';
 
-class BasicMaterial extends Material {
+export class BasicMaterial extends Material {
     uniformBuffer: GPUBuffer;
     baseColor: Float32Array;
 
