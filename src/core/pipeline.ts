@@ -1,4 +1,4 @@
-interface PipelineDescriptor {
+export interface PipelineDescriptor {
     device: GPUDevice;
     textureFormat: GPUTextureFormat;
     shaderModule: GPUShaderModule;
@@ -11,7 +11,7 @@ interface PipelineDescriptor {
     vertexBuffers?: GPUVertexBufferLayout[];
 }
 
-class Pipeline {
+export class Pipeline {
 
     device: GPUDevice;
     textureFormat: GPUTextureFormat;
