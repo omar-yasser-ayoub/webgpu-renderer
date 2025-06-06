@@ -1,7 +1,7 @@
 import { Scene } from '../scene/scene';
 import { Camera } from '../scene/camera';
 
-class Renderer {
+export class Renderer {
     device!: GPUDevice;
     context: GPUCanvasContext;
     textureFormat!: GPUTextureFormat;
@@ -11,23 +11,7 @@ class Renderer {
     constructor(canvas: HTMLCanvasElement, scene: Scene, camera: Camera) {
       this.scene = scene;
       this.camera = camera;
-  
       this.context = canvas.getContext('webgpu') as GPUCanvasContext;
-
-      navigator.gpu.requestAdapter().then(adapter => {
-        if (!adapter) throw new Error('No WebGPU adapter found');
-        adapter.requestDevice().then(device => {
-          this.device = device;
-          this.textureFormat = navigator.gpu.getPreferredCanvasFormat();
-          this.context.configure({
-            device: this.device,
-            format: this.textureFormat,
-            alphaMode: 'opaque',
-          });
-          // You can trigger your first frame here or outside
-          this.renderFrame();
-        });
-      });
     }
   
     renderFrame() {
