@@ -5,7 +5,7 @@ import { Camera } from './scene/camera';     // your Camera class
 import { BoxMesh } from './scene/boxmesh';
 import { BasicMaterial } from './scene/basicmateral';
 import { vec3 } from 'wgpu-matrix';
-
+import { initRenderer } from './core/renderer';
 function App() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const rendererRef = useRef<Renderer | null>(null);
@@ -27,57 +27,26 @@ function App() {
       vec3.create(0, 0, 5), 
       vec3.create(0, 0, 0), 
       vec3.create(0, 1, 0), 
-    );
+    );    
 
-    
+    let animationFrameId: number;
 
-    // Instantiate your renderer with canvas, scene, and camera
-    // Because your Renderer constructor currently uses async calls internally,
-    // you might want to change Renderer to have an async init method or handle device setup outside
-    // For this example, let's assume Renderer constructor is sync and device is ready
+    async function init() {
+      rendererRef.current = await initRenderer(canvas, scene, camera);
 
-    // If your Renderer constructor does async device requests, 
-    // you should modify it to expose an async init or make device a Promise
-    // For demo, I'll refactor Renderer a bit here inline:
-
-    async function initRenderer() {
-      // create adapter and device manually:
-      const adapter = await navigator.gpu.requestAdapter();
-      if (!adapter) throw new Error('WebGPU adapter not found');
-      const device = await adapter.requestDevice();
-
-      const context = canvas.getContext('webgpu')!;
-      const format = navigator.gpu.getPreferredCanvasFormat();
-
-      context.configure({
-        device,
-        format,
-        alphaMode: 'opaque',
-      });
-
-      // Create renderer instance with these
-      rendererRef.current = new Renderer(canvas, scene, camera);
-      rendererRef.current.device = device;
-      rendererRef.current.context = context;
-      rendererRef.current.textureFormat = format;
-
-      const material = new BasicMaterial(device);
-      const mesh = new BoxMesh(device, material);
-
-      scene.add(mesh);
-      // Start render loop
       function frame() {
         rendererRef.current?.renderFrame();
-        requestAnimationFrame(frame);
+        animationFrameId = requestAnimationFrame(frame);
       }
-      requestAnimationFrame(frame);
+      frame();
     }
 
-    initRenderer();
+    init();
 
     // cleanup
     return () => {
       rendererRef.current = null;
+      cancelAnimationFrame(animationFrameId);
     };
   }, []);
 

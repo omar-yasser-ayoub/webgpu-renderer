@@ -32,5 +32,29 @@ export class Renderer {
       passEncoder.end();
       this.device.queue.submit([commandEncoder.finish()]);
     }
-  }
-  
+}
+
+export async function initRenderer(canvas: HTMLCanvasElement, scene: Scene, camera: Camera) {
+
+    // create adapter and device manually:
+    const adapter = await navigator.gpu.requestAdapter();
+    if (!adapter) throw new Error('WebGPU adapter not found');
+    const device = await adapter.requestDevice();
+
+    const context = canvas.getContext('webgpu')!;
+    const format = navigator.gpu.getPreferredCanvasFormat();
+
+    context.configure({
+      device,
+      format,
+      alphaMode: 'opaque',
+    });
+
+    // Create renderer instance with these
+    const renderer = new Renderer(canvas, scene, camera);
+    renderer.device = device;
+    renderer.context = context;
+    renderer.textureFormat = format;
+
+    return renderer;
+}
