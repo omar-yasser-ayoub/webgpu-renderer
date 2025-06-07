@@ -4,6 +4,7 @@ import { Scene } from './scene/scene';       // your Scene class
 import { Camera } from './scene/camera';     // your Camera class
 import { BoxMesh } from './scene/boxmesh';
 import { BasicMaterial } from './scene/basicmateral';
+import { vec3 } from 'wgpu-matrix';
 
 function App() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -14,9 +15,19 @@ function App() {
 
     const canvas = canvasRef.current;
 
+    const devicePixelRatio = window.devicePixelRatio || 1;
+    canvas.width = canvas.clientWidth * devicePixelRatio;
+    canvas.height = canvas.clientHeight * devicePixelRatio;
+
     // Create your scene and camera here
     const scene = new Scene();
-    const camera = new Camera(110, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
+    const camera = new Camera(Math.PI / 5, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
+
+    camera.lookAt(
+      vec3.create(0, 0, 5), 
+      vec3.create(0, 0, 0), 
+      vec3.create(0, 1, 0), 
+    );
 
     
 
