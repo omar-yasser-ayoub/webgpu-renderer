@@ -4,7 +4,7 @@ import { Scene } from './scene/scene';       // your Scene class
 import { Camera } from './scene/camera';     // your Camera class
 import { BoxMesh } from './scene/boxmesh';
 import { BasicMaterial } from './scene/basicmateral';
-import { quat, vec3, type Vec3 } from 'wgpu-matrix';
+import { quat, vec3, type Vec3, vec4 } from 'wgpu-matrix';
 import { initRenderer } from './core/renderer';
 import "./app.css";
 function App() {
@@ -39,9 +39,16 @@ function App() {
     }
     else {
       //initialize all meshes, materials, etc here!
-      const material = new BasicMaterial(rendererRef.current.device);
+      const material = new BasicMaterial(rendererRef.current.device, vec4.create(1, 0, 0, 1)); // red color
       const mesh = new BoxMesh(rendererRef.current.device, material);
+      mesh.setPosition(vec3.create(0.7, 0, 0));
       scene.add(mesh);
+
+      const material2 = new BasicMaterial(rendererRef.current.device, vec4.create(0, 1, 0, 1)); // red color
+      const mesh2 = new BoxMesh(rendererRef.current.device, material2);
+      mesh2.setPosition(vec3.create(-0.7, 0, 0));
+      scene.add(mesh2);
+
     }
 
     function renderLoop() {
