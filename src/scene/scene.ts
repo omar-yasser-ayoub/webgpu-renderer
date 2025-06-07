@@ -1,5 +1,6 @@
 import { Mesh } from './mesh';
 import { Camera } from './camera';
+import { mat4 } from 'wgpu-matrix';
 export class Scene {
     meshes: Mesh[] = [];
     add(mesh: Mesh) { this.meshes.push(mesh); }
@@ -8,7 +9,9 @@ export class Scene {
         const vpMatrix = camera.getViewProjection();
     
         for (const mesh of this.meshes) {
-          mesh.material.update(device, vpMatrix);
+          const modelMatrix = mesh.getModelMatrix();
+          const mvpMatrix = mat4.multiply(vpMatrix, modelMatrix);
+          mesh.material.update(device, mvpMatrix);
           mesh.draw(passEncoder);
         }
       }
