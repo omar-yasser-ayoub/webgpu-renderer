@@ -3,6 +3,9 @@ import { mat4, quat, vec3, type Vec3, type Quat, type Mat4 } from 'wgpu-matrix';
 export abstract class Mesh {
     vertexBuffer!: GPUBuffer;
     indexBuffer?: GPUBuffer;
+    uniformBuffer: GPUBuffer;
+    bindGroup: GPUBindGroup;
+    bindGroupLayout: GPUBindGroupLayout;
     indexCount: number = 0;
     material: Material;
     position: Vec3 = vec3.create(0, 0, 0);
@@ -12,8 +15,40 @@ export abstract class Mesh {
     private modelMatrix = mat4.create();
     private modelMatrixNeedsUpdate = true;
     
-    constructor(material: Material) {
+    constructor(device: GPUDevice, material: Material) {
+        console.log(device)
+        this.uniformBuffer = device.createBuffer({
+            size: 64,
+            usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
+        })
+
+        this.bindGroupLayout = device.createBindGroupLayout({
+            entries: [
+                {
+                    binding: 0,
+                    visibility: GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT,
+                    buffer: { type: 'uniform' },
+                },
+            ],
+        });
+
+        this.bindGroup = device.createBindGroup({
+            layout: this.bindGroupLayout,
+            entries: [
+                {
+                    binding: 0,
+                    resource: {
+                        buffer: this.uniformBuffer,
+                    },
+                },
+            ],
+        });
+
         this.material = material;
+    }
+
+    updateUniforms(device: GPUDevice, mvpMatrix: Float32Array) {
+        device.queue.writeBuffer(this.uniformBuffer, 0, mvpMatrix.buffer, mvpMatrix.byteOffset, mvpMatrix.byteLength);
     }
 
     markDirty() {
@@ -61,6 +96,7 @@ export abstract class Mesh {
 
     draw(encoder: GPURenderPassEncoder): void {
         this.material.apply(encoder);
+        encoder.setBindGroup(0, this.bindGroup);
         encoder.setVertexBuffer(0, this.vertexBuffer);
         if (this.indexBuffer) {
             encoder.setIndexBuffer(this.indexBuffer, 'uint16');

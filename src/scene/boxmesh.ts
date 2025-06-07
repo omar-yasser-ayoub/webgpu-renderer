@@ -2,7 +2,7 @@ import { Mesh } from "./mesh";
 
 export class BoxMesh extends Mesh {
     constructor(device: GPUDevice, material: any) {
-        super(material);
+        super(device, material);
         this.createBuffers(device);
     }
 

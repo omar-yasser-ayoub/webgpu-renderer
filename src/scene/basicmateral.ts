@@ -2,103 +2,133 @@ import { Material } from './material';
 import { Pipeline } from '../core/pipeline';
 
 export class BasicMaterial extends Material {
-    uniformBuffer: GPUBuffer;
-    baseColor: Float32Array;
+  color: Float32Array;
+  uniformBuffer: GPUBuffer;
+  bindGroupLayout: GPUBindGroupLayout;
+  bindGroup: GPUBindGroup;
 
-    constructor(device: GPUDevice) {
-        const shaderModule = device.createShaderModule({
-            code: `
-          struct Uniforms {
-            mvpMatrix : mat4x4<f32>,
-            baseColor : vec4<f32>,
-          };
-          
-          @binding(0) @group(0) var<uniform> uniforms : Uniforms;
-          
-          struct VertexInput {
-            @location(0) position : vec3<f32>,
-          };
-          
-          struct VertexOutput {
-            @builtin(position) position : vec4<f32>,
-            @location(0) color : vec4<f32>,
-          };
-          
-          @vertex
-          fn vertex(input: VertexInput) -> VertexOutput {
-            var output: VertexOutput;
-            output.position = uniforms.mvpMatrix * vec4<f32>(input.position, 1.0);
-            output.color = uniforms.baseColor;
-            return output;
-          }
-          
-          @fragment
-          fn fragment(input: VertexOutput) -> @location(0) vec4<f32> {
-            return input.color;
-          }
-          `
-          });
+  constructor(device: GPUDevice, color: Float32Array = new Float32Array([1, 1, 1, 1])) {
+    const shaderModule = device.createShaderModule({
+      code: `
+        struct MaterialUniforms {
+          baseColor : vec4<f32>,
+        }
+    
+        struct VertexInput {
+          @location(0) position : vec3<f32>,
+        }
+    
+        struct VertexOutput {
+          @builtin(position) position : vec4<f32>,
+          @location(0) color : vec4<f32>,
+        }
+    
+        @group(0) @binding(0)
+        var<uniform> mvpMatrix : mat4x4<f32>;
+    
+        @group(1) @binding(0)
+        var<uniform> material : MaterialUniforms;
+    
+        @vertex
+        fn vertex(input: VertexInput) -> VertexOutput {
+          var output: VertexOutput;
+          output.position = mvpMatrix * vec4<f32>(input.position, 1.0);
+          output.color = material.baseColor;
+          return output;
+        }
+    
+        @fragment
+        fn fragment(input: VertexOutput) -> @location(0) vec4<f32> {
+          return input.color;
+        }
+      `
+    });
 
-        const bindGroupLayout = device.createBindGroupLayout({
-            entries: [
-                {
-                    binding: 0,
-                    visibility: GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT,
-                    buffer: { type: 'uniform' }
-                }
-            ]
-        });
+    // Material uniform buffer size: 4 floats = 16 bytes
+    const uniformBuffer = device.createBuffer({
+      size: 16,
+      usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
+    });
 
-        const pipeline = new Pipeline(
+    // Bind group layout for material uniforms (group 1)
+    const bindGroupLayout = device.createBindGroupLayout({
+      entries: [{
+        binding: 0,
+        visibility: GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT,
+        buffer: { type: 'uniform' }
+      }]
+    });
+
+    // Bind group for material uniforms
+    const bindGroup = device.createBindGroup({
+      layout: bindGroupLayout,
+      entries: [{
+        binding: 0,
+        resource: {
+          buffer: uniformBuffer,
+        }
+      }]
+    });
+
+    const pipeline = new Pipeline({
+      device,
+      textureFormat: 'bgra8unorm',
+      shaderModule,
+      bindGroupLayout,
+      vertexEntryPoint: 'vertex',
+      fragmentEntryPoint: 'fragment',
+      primitiveTopology: 'triangle-list',
+      cullMode: 'back',
+      targets: [{
+        format: 'bgra8unorm',
+        writeMask: GPUColorWrite.ALL,
+        blend: {
+          color: { operation: 'add', srcFactor: 'src-alpha', dstFactor: 'one-minus-src-alpha' },
+          alpha: { operation: 'add', srcFactor: 'one', dstFactor: 'zero' }
+        }
+      }],
+      vertexBuffers: [
+        {
+          arrayStride: 12,
+          attributes: [
             {
-                device,
-                textureFormat: 'bgra8unorm',
-                shaderModule,
-                bindGroupLayout,
-                vertexEntryPoint: 'vertex',
-                fragmentEntryPoint: 'fragment',
-                primitiveTopology: 'triangle-list',
-                cullMode: 'back',
-                targets: [{
-                    format: 'bgra8unorm',
-                    writeMask: GPUColorWrite.ALL,
-                    blend: {
-                        color: { operation: 'add', srcFactor: 'src-alpha', dstFactor: 'one-minus-src-alpha' },
-                        alpha: { operation: 'add', srcFactor: 'one', dstFactor: 'zero' }
-                    }
-                }],
-                vertexBuffers: []
+              shaderLocation: 0,
+              offset: 0,
+              format: 'float32x3'
             }
-        )
+          ]
+        }
+      ]
+    });
 
-        super(pipeline);
+    super(pipeline, bindGroup, bindGroupLayout, uniformBuffer);
 
-        this.uniformBuffer = device.createBuffer({
-            size: 80,
-            usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
-        });
+    this.color = color;
+    this.uniformBuffer = uniformBuffer;
+    this.bindGroupLayout = bindGroupLayout;
+    this.bindGroup = bindGroup;
 
-        this.baseColor = new Float32Array([1.0, 1.0, 1.0, 1.0]);
+    // Initialize uniform buffer with default color
+    this.updateColor(device);
+  }
 
-        this.bindGroups.push(
-            device.createBindGroup({
-                layout: bindGroupLayout,
-                entries: [
-                    {
-                        binding: 0,
-                        resource: {
-                            buffer: this.uniformBuffer
-                        }
-                    }
-                ]
-            })
-        );
-    }
+  setColor(newColor: Float32Array) {
+    this.color.set(newColor);
+    this.updateColor(this.pipeline.device);
+  }
 
-    update(device: GPUDevice, mvpMatrix: Float32Array): void {
-        const unformData = new Float32Array(20);
-        unformData.set(mvpMatrix, 0);
-        unformData.set(this.baseColor, 16);
-        device.queue.writeBuffer(this.uniformBuffer, 0, unformData.buffer)
-    }
+  updateColor(device: GPUDevice) {
+    // Write the RGBA color to the uniform buffer
+    device.queue.writeBuffer(
+      this.uniformBuffer,
+      0,
+      this.color.buffer,
+      this.color.byteOffset,
+      this.color.byteLength
+    );
+  }
+
+  updateUniforms(device: GPUDevice) {
+    this.updateColor(device);
+  }
 }

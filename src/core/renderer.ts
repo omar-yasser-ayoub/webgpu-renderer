@@ -56,7 +56,5 @@ export async function initRenderer(canvas: HTMLCanvasElement, scene: Scene, came
     // Create renderer instance with these
     const renderer = new Renderer(scene, camera, device, context, format);
 
-    console.log(device, context, format);
-
     return renderer;
 }

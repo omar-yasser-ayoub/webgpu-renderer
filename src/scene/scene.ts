@@ -6,13 +6,13 @@ export class Scene {
     add(mesh: Mesh) { this.meshes.push(mesh); }
 
     render(passEncoder: GPURenderPassEncoder, camera: Camera, device: GPUDevice) {
-        const vpMatrix = camera.getViewProjection();
-    
-        for (const mesh of this.meshes) {
-          const modelMatrix = mesh.getModelMatrix();
-          const mvpMatrix = mat4.multiply(vpMatrix, modelMatrix);
-          mesh.material.update(device, mvpMatrix);
-          mesh.draw(passEncoder);
-        }
+      const vpMatrix = camera.getViewProjection();
+  
+      for (const mesh of this.meshes) {
+        const modelMatrix = mesh.getModelMatrix();
+        const mvpMatrix = mat4.multiply(vpMatrix, modelMatrix);
+        mesh.updateUniforms(device, mvpMatrix);
+        mesh.draw(passEncoder);
       }
+    }
 }

@@ -2,19 +2,19 @@ import { Pipeline } from '../core/pipeline';
 
 export abstract class Material {
     pipeline: Pipeline;
-    bindGroups: GPUBindGroup[];
+    bindGroupLayout: GPUBindGroupLayout;
+    bindGroup: GPUBindGroup;
+    uniformBuffer: GPUBuffer;
 
-    constructor(pipeline: Pipeline) {
+    constructor(pipeline: Pipeline, bindGroup:GPUBindGroup, bindGroupLayout: GPUBindGroupLayout, uniformBuffer: GPUBuffer) {
         this.pipeline = pipeline;
-        this.bindGroups = [];
+        this.bindGroup = bindGroup;
+        this.bindGroupLayout = bindGroupLayout;
+        this.uniformBuffer = uniformBuffer;
     }
-
-    abstract update(device: GPUDevice, mvpMatrix: Float32Array): void;
 
     apply(passEncoder: GPURenderPassEncoder): void {
         passEncoder.setPipeline(this.pipeline.pipeline);
-        this.bindGroups.forEach((bindGroup, index) => {
-            passEncoder.setBindGroup(index, bindGroup);
-        })
+        passEncoder.setBindGroup(1, this.bindGroup);
     }
 }
