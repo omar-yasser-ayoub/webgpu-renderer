@@ -16,7 +16,7 @@ function App() {
 
     // Create your scene and camera here
     const scene = new Scene();
-    const camera = new Camera(90, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
+    const camera = new Camera(110, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
 
     
 

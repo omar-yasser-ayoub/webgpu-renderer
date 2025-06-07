@@ -56,7 +56,20 @@ export class Pipeline {
             alpha: { operation: 'add', srcFactor: 'one', dstFactor: 'zero' }
           }
         }];
-        this.vertexBuffers = vertexBuffers;
+
+        const vertexBufferLayout: GPUVertexBufferLayout = {
+          arrayStride: 12, // 3 * 4 bytes
+          attributes: [
+            {
+              shaderLocation: 0,
+              offset: 0,
+              format: 'float32x3'
+            }
+          ],
+          stepMode: 'vertex'
+        };
+
+        this.vertexBuffers = [vertexBufferLayout];
         
         this.pipeline = this.createPipeline();
       }

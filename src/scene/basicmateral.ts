@@ -74,7 +74,7 @@ export class BasicMaterial extends Material {
         super(pipeline);
 
         this.uniformBuffer = device.createBuffer({
-            size: 64,
+            size: 80,
             usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
         });
 
