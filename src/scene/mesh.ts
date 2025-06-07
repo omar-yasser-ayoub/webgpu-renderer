@@ -23,6 +23,7 @@ export abstract class Mesh {
         })
 
         this.bindGroupLayout = device.createBindGroupLayout({
+            label: 'Mesh Bind Group  Layout',
             entries: [
                 {
                     binding: 0,
@@ -32,7 +33,7 @@ export abstract class Mesh {
             ],
         });
 
-        this.bindGroup = device.createBindGroup({
+        this.bindGroup = device.createBindGroup({  
             layout: this.bindGroupLayout,
             entries: [
                 {

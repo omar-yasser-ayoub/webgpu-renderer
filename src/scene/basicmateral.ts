@@ -50,7 +50,16 @@ export class BasicMaterial extends Material {
       usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
     });
 
-    // Bind group layout for material uniforms (group 1)
+    const meshBindGroupLayout = device.createBindGroupLayout({
+      entries: [
+          {
+              binding: 0,
+              visibility: GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT,
+              buffer: { type: 'uniform' },
+          },
+      ],
+  });
+
     const bindGroupLayout = device.createBindGroupLayout({
       entries: [{
         binding: 0,
@@ -59,8 +68,16 @@ export class BasicMaterial extends Material {
       }]
     });
 
-    // Bind group for material uniforms
+    const pipelineLayout = device.createPipelineLayout({
+      label: 'BasicMaterial Pipeline Layout',
+      bindGroupLayouts: [
+        meshBindGroupLayout,      // group 0
+        bindGroupLayout,  // group 1
+      ],
+    });
+
     const bindGroup = device.createBindGroup({
+      label: 'BasicMaterial Bind Group',
       layout: bindGroupLayout,
       entries: [{
         binding: 0,
@@ -74,7 +91,7 @@ export class BasicMaterial extends Material {
       device,
       textureFormat: 'bgra8unorm',
       shaderModule,
-      bindGroupLayout,
+      pipelineLayout,
       vertexEntryPoint: 'vertex',
       fragmentEntryPoint: 'fragment',
       primitiveTopology: 'triangle-list',

@@ -2,7 +2,7 @@ export interface PipelineDescriptor {
     device: GPUDevice;
     textureFormat: GPUTextureFormat;
     shaderModule: GPUShaderModule;
-    bindGroupLayout: GPUBindGroupLayout;
+    pipelineLayout: GPUPipelineLayout;
     vertexEntryPoint: string;
     fragmentEntryPoint: string;
     primitiveTopology?: GPUPrimitiveTopology;
@@ -16,7 +16,7 @@ export class Pipeline {
     device: GPUDevice;
     textureFormat: GPUTextureFormat;
     shaderModule: GPUShaderModule;
-    bindGroupLayout: GPUBindGroupLayout;
+    pipelineLayout: GPUPipelineLayout;
     vertexEntryPoint: string;
     fragmentEntryPoint: string;
     primitiveTopology: GPUPrimitiveTopology;
@@ -31,7 +31,7 @@ export class Pipeline {
           device,
           textureFormat,
           shaderModule,
-          bindGroupLayout,
+          pipelineLayout,
           vertexEntryPoint = 'vertex',
           fragmentEntryPoint = 'fragment',
           primitiveTopology = 'triangle-list',
@@ -43,7 +43,7 @@ export class Pipeline {
         this.device = device;
         this.textureFormat = textureFormat;
         this.shaderModule = shaderModule;
-        this.bindGroupLayout = bindGroupLayout;
+        this.pipelineLayout = pipelineLayout;
         this.vertexEntryPoint = vertexEntryPoint;
         this.fragmentEntryPoint = fragmentEntryPoint;
         this.primitiveTopology = primitiveTopology;
@@ -76,7 +76,7 @@ export class Pipeline {
 
     createPipeline(): GPURenderPipeline {
         return this.device.createRenderPipeline({
-            layout: this.device.createPipelineLayout({ bindGroupLayouts: [this.bindGroupLayout]}),
+            layout: this.pipelineLayout,
             vertex: {
                 module: this.shaderModule,
                 entryPoint: this.vertexEntryPoint,
