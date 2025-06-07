@@ -2,16 +2,18 @@ import { Scene } from '../scene/scene';
 import { Camera } from '../scene/camera';
 
 export class Renderer {
-    device!: GPUDevice;
+    device: GPUDevice;
     context: GPUCanvasContext;
-    textureFormat!: GPUTextureFormat;
+    textureFormat: GPUTextureFormat;
     scene: Scene;
     camera: Camera;
   
-    constructor(canvas: HTMLCanvasElement, scene: Scene, camera: Camera) {
+    constructor(scene: Scene, camera: Camera, device: GPUDevice, context: GPUCanvasContext, textureFormat: GPUTextureFormat) {
+      this.device = device;
+      this.context = context;
+      this.textureFormat = textureFormat;
       this.scene = scene;
       this.camera = camera;
-      this.context = canvas.getContext('webgpu') as GPUCanvasContext;
     }
   
     renderFrame() {
@@ -39,6 +41,7 @@ export async function initRenderer(canvas: HTMLCanvasElement, scene: Scene, came
     // create adapter and device manually:
     const adapter = await navigator.gpu.requestAdapter();
     if (!adapter) throw new Error('WebGPU adapter not found');
+
     const device = await adapter.requestDevice();
 
     const context = canvas.getContext('webgpu')!;
@@ -51,10 +54,9 @@ export async function initRenderer(canvas: HTMLCanvasElement, scene: Scene, came
     });
 
     // Create renderer instance with these
-    const renderer = new Renderer(canvas, scene, camera);
-    renderer.device = device;
-    renderer.context = context;
-    renderer.textureFormat = format;
+    const renderer = new Renderer(scene, camera, device, context, format);
+
+    console.log(device, context, format);
 
     return renderer;
 }

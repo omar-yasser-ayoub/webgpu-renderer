@@ -10,7 +10,7 @@ function App() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const rendererRef = useRef<Renderer | null>(null);
 
-  useEffect(() => {
+  async function initialize() {
     if (!canvasRef.current) return;
 
     const canvas = canvasRef.current;
@@ -30,24 +30,34 @@ function App() {
     );    
 
     let animationFrameId: number;
+    rendererRef.current = await initRenderer(canvas, scene, camera);
 
-    async function init() {
-      rendererRef.current = await initRenderer(canvas, scene, camera);
-
-      function frame() {
-        rendererRef.current?.renderFrame();
-        animationFrameId = requestAnimationFrame(frame);
-      }
-      frame();
+    if (!rendererRef.current) {
+      console.error('Renderer initialization failed');
+      return;
+    }
+    else {
+      //initialize all meshes, materials, etc here!
+      const material = new BasicMaterial(rendererRef.current.device);
+      const mesh = new BoxMesh(rendererRef.current.device, material);
+      scene.add(mesh);
     }
 
-    init();
+    function renderLoop() {
+      rendererRef.current?.renderFrame();
+      animationFrameId = requestAnimationFrame(renderLoop);
+    }
+    renderLoop();
 
     // cleanup
     return () => {
       rendererRef.current = null;
       cancelAnimationFrame(animationFrameId);
     };
+  }
+
+  useEffect(() => {
+    initialize();
   }, []);
 
   return <canvas ref={canvasRef} style={{ width: '100vw', height: '100vh', display: 'block' }} />;
