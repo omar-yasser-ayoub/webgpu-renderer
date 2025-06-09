@@ -60,14 +60,17 @@ export abstract class Mesh {
         if (this.modelMatrixNeedsUpdate) {
           this.modelMatrixNeedsUpdate = false;
     
-          const i = mat4.identity();
-    
-          const scaled = mat4.scale(i, this.scale);
+          const scale = mat4.scale(mat4.identity(), this.scale);
 
-        //   const rotated = mat4.fromQuat(scaled, this.rotation);
-          
-        //   console.log(rotated, scaled);
-          this.modelMatrix = mat4.translate(scaled, this.position);
+          const rotate = mat4.multiply(mat4.fromQuat(this.rotation), mat4.identity());
+
+          const translate = mat4.translate(mat4.identity(), this.position);
+
+          const tmpmat = mat4.multiply(rotate, scale);
+
+          const modelmat = mat4.multiply(translate, tmpmat);
+
+          this.modelMatrix = modelmat;
         }
         return this.modelMatrix;
     }
@@ -77,8 +80,14 @@ export abstract class Mesh {
         this.markDirty();
     }
 
-    setRotation(rotation: Quat) {
-        this.rotation = rotation;
+    setRotation(rotation: Vec3) {
+        this.rotation = quat.fromEuler(
+            rotation[0] * Math.PI / 180,
+            rotation[1] * Math.PI / 180,
+            rotation[2] * Math.PI / 180,
+            "yxz"
+        );
+    
         this.markDirty();
     }
 

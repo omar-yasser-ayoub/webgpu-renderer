@@ -33,6 +33,10 @@ function App() {
     let animationFrameId: number;
     rendererRef.current = await initRenderer(canvas, scene, camera);
 
+    let x = 0;
+
+    let mesh: BoxMesh;
+
     if (!rendererRef.current) {
       console.error('Renderer initialization failed');
       return;
@@ -40,8 +44,10 @@ function App() {
     else {
       //initialize all meshes, materials, etc here!
       const material = new BasicMaterial(rendererRef.current.device, vec4.create(1, 0, 0, 1)); // red color
-      const mesh = new BoxMesh(rendererRef.current.device, material);
+      mesh = new BoxMesh(rendererRef.current.device, material);
       mesh.setPosition(vec3.create(0.7, 0, 0));
+      mesh.setRotation(vec3.create(0, x, 0))
+      mesh.setScale(vec3.create(0.5, 0.5, 0.5));
       scene.add(mesh);
 
       const material2 = new BasicMaterial(rendererRef.current.device, vec4.create(0, 1, 0, 1)); // red color
@@ -53,7 +59,8 @@ function App() {
 
     function renderLoop() {
       rendererRef.current?.renderFrame();
-      animationFrameId = requestAnimationFrame(renderLoop);
+      animationFrameId = requestAnimationFrame(renderLoop);;
+      mesh.setRotation(vec3.create(0, animationFrameId/20, 0));
     }
     renderLoop();
 
