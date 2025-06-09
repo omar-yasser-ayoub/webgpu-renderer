@@ -1,0 +1,87 @@
+import { Material } from './material';
+import { Pipeline } from '../core/pipeline';
+
+export class HelloWorldMaterial extends Material {
+  constructor(device: GPUDevice) {
+    const shaderModule = device.createShaderModule({
+      code: `
+        struct VertexInput {
+          @location(0) position : vec3<f32>,
+        }
+    
+        struct VertexOutput {
+          @builtin(position) position : vec4<f32>,
+          @location(0) color : vec4<f32>,
+        }
+    
+        @group(0) @binding(0)
+        var<uniform> mvpMatrix : mat4x4<f32>;
+    
+        @vertex
+        fn vertex(input: VertexInput) -> VertexOutput {
+          var output: VertexOutput;
+          output.position = mvpMatrix * vec4<f32>(input.position, 1.0);
+    
+          // Procedural RGB based on position
+          output.color = vec4<f32>((input.position + vec3<f32>(1.0)) * 0.5, 1.0);
+          return output;
+        }
+    
+        @fragment
+        fn fragment(input: VertexOutput) -> @location(0) vec4<f32> {
+          return input.color;
+        }
+      `
+    });
+
+    const meshBindGroupLayout = device.createBindGroupLayout({
+      entries: [
+          {
+              binding: 0,
+              visibility: GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT,
+              buffer: { type: 'uniform' },
+          },
+      ],
+    });
+
+    const pipelineLayout = device.createPipelineLayout({
+      label: 'HelloWorldMaterial Pipeline Layout',
+      bindGroupLayouts: [
+        meshBindGroupLayout,      // group 0
+      ],
+    });
+
+    const pipeline = new Pipeline({
+      device,
+      textureFormat: 'bgra8unorm',
+      shaderModule,
+      pipelineLayout,
+      vertexEntryPoint: 'vertex',
+      fragmentEntryPoint: 'fragment',
+      primitiveTopology: 'triangle-list',
+      cullMode: 'back',
+      targets: [{
+        format: 'bgra8unorm',
+        writeMask: GPUColorWrite.ALL,
+        blend: {
+          color: { operation: 'add', srcFactor: 'src-alpha', dstFactor: 'one-minus-src-alpha' },
+          alpha: { operation: 'add', srcFactor: 'one', dstFactor: 'zero' }
+        }
+      }],
+      vertexBuffers: [
+        {
+          arrayStride: 12,
+          attributes: [
+            {
+              shaderLocation: 0,
+              offset: 0,
+              format: 'float32x3'
+            }
+          ]
+        }
+      ]
+    });
+
+    super(pipeline);
+  }
+}
