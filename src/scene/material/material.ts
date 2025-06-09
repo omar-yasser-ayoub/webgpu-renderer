@@ -1,4 +1,4 @@
-import { Pipeline } from '../core/pipeline';
+import { Pipeline } from '../../core/pipeline';
 
 export abstract class Material {
     pipeline: Pipeline;

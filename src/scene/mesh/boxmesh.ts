@@ -1,9 +1,11 @@
+import type { Material } from "../material/material";
 import { Mesh } from "./mesh";
 
 export class BoxMesh extends Mesh {
-    constructor(device: GPUDevice, material: any) {
+    constructor(device: GPUDevice, material: Material) {
         super(device, material);
         this.createBuffers(device);
+        
     }
 
     createBuffers(device: GPUDevice): void {

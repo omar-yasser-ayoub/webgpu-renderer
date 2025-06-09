@@ -1,4 +1,4 @@
-import { Mesh } from './mesh';
+import { Mesh } from './mesh/mesh';
 import { Camera } from './camera';
 import { mat4 } from 'wgpu-matrix';
 export class Scene {

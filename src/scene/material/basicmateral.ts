@@ -1,5 +1,5 @@
 import { Material } from './material';
-import { Pipeline } from '../core/pipeline';
+import { Pipeline } from '../../core/pipeline';
 
 export class BasicMaterial extends Material {
   color: Float32Array;
@@ -118,7 +118,7 @@ export class BasicMaterial extends Material {
       ]
     });
 
-    super(pipeline, bindGroup, bindGroupLayout, uniformBuffer);
+    super(pipeline, bindGroupLayout, bindGroup, uniformBuffer);
 
     this.color = color;
     this.uniformBuffer = uniformBuffer;

@@ -2,12 +2,12 @@ import React, { useEffect, useRef } from 'react';
 import { Renderer } from './core/renderer'; // your Renderer class
 import { Scene } from './scene/scene';       // your Scene class
 import { Camera } from './scene/camera';     // your Camera class
-import { BoxMesh } from './scene/boxmesh';
-import { BasicMaterial } from './scene/basicmateral';
+import { BoxMesh } from './scene/mesh/boxmesh';
 import { quat, vec3, type Vec3, vec4 } from 'wgpu-matrix';
 import { initRenderer } from './core/renderer';
 import "./app.css";
-import { HelloWorldMaterial } from './scene/helloworldmaterial';
+import { HelloWorldMaterial } from './scene/material/helloworldmaterial';
+import { BasicMaterial } from './scene/material/basicmateral';
 function App() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const rendererRef = useRef<Renderer | null>(null);
@@ -45,7 +45,7 @@ function App() {
     }
     else {
       //initialize all meshes, materials, etc here!
-      const material = new HelloWorldMaterial(rendererRef.current.device); // red color
+      const material = new BasicMaterial(rendererRef.current.device, new Float32Array([1,1,1,1])); // red color
       mesh = new BoxMesh(rendererRef.current.device, material);
       mesh.setPosition(vec3.create(0.7, 0, 0));
       mesh.setRotation(vec3.create(0, x, 0))

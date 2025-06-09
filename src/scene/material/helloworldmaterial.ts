@@ -1,5 +1,5 @@
 import { Material } from './material';
-import { Pipeline } from '../core/pipeline';
+import { Pipeline } from '../../core/pipeline';
 
 export class HelloWorldMaterial extends Material {
   constructor(device: GPUDevice) {

@@ -1,4 +1,4 @@
-import type { Material } from "./material";
+import type { Material } from "../material/material";
 import { mat4, quat, vec3, type Vec3, type Quat, type Mat4 } from 'wgpu-matrix';
 export abstract class Mesh {
     vertexBuffer!: GPUBuffer;
@@ -16,7 +16,6 @@ export abstract class Mesh {
     private modelMatrixNeedsUpdate = true;
     
     constructor(device: GPUDevice, material: Material) {
-        console.log(device)
         this.uniformBuffer = device.createBuffer({
             size: 64,
             usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
