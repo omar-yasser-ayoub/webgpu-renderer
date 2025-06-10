@@ -56,7 +56,7 @@ export class Pipeline {
         }];
 
         const vertexBufferLayout: GPUVertexBufferLayout = {
-          arrayStride: 40, // 3 * 4 bytes
+          arrayStride: 40, // 3 floats for position (12 bytes) + 1 float padding + 3 floats for normal (12 bytes) + 1 float padding + 2 floats for UV (8 bytes) = 32 bytes
           attributes: [
             {
               shaderLocation: 0,

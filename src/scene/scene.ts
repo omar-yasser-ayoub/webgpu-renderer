@@ -5,6 +5,7 @@ import { SceneObject } from './sceneobject';
 export class Scene {
     meshes: Mesh[] = [];
     camera!: Camera;
+    
     add(object: SceneObject) { 
       if (object instanceof Camera) {
         this.camera = object;

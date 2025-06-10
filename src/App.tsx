@@ -1,14 +1,14 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { Renderer } from './core/renderer'; // your Renderer class
 import { Scene } from './scene/scene';       // your Scene class
 import { Camera } from './scene/camera';     // your Camera class
 import { BoxMesh } from './scene/mesh/boxmesh';
-import { quat, vec3, type Vec3, vec4 } from 'wgpu-matrix';
+import { vec3 } from 'wgpu-matrix';
 import { initRenderer } from './core/renderer';
 import "./app.css";
 import { SphereMesh } from './scene/mesh/spheremesh';
 import { FlatShadingMaterial } from './scene/material/flatshadingmaterial';
-import { NormalMaterial } from './scene/material/normalMaterial';
+import { NormalMaterial } from './scene/material/normalmaterial';
 
 function App() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
