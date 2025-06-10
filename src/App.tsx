@@ -25,6 +25,7 @@ function App() {
     canvas.height = canvas.clientHeight * devicePixelRatio;
 
     rendererRef.current = await initRenderer(canvas);
+    
     if (!rendererRef.current) {
       console.error('Renderer initialization failed');
       return;
@@ -33,9 +34,7 @@ function App() {
     // Create your scene and camera here
     const scene = new Scene(rendererRef.current.device);
 
-
     rendererRef.current.setScene(scene);
-
 
     const camera = new Camera(Math.PI / 5, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
 
@@ -46,7 +45,6 @@ function App() {
     );    
 
     scene.add(camera);
-    let animationFrameId: number;
     
     //initialize all meshes, materials, etc here!
     const material = new SmoothShadingMaterial(rendererRef.current.device); // red color
@@ -61,7 +59,8 @@ function App() {
     mesh2.setScale(vec3.create(0.5, 0.5, 0.5));
     scene.add(mesh2);
 
-
+    
+    let animationFrameId: number;
     function renderLoop() {
       rendererRef.current?.renderFrame();
       animationFrameId = requestAnimationFrame(renderLoop);

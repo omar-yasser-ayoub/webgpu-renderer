@@ -10,11 +10,12 @@ export class Scene {
     lightUniformBuffer!: GPUBuffer;
     lightBindGroupLayout!: GPUBindGroupLayout;
     lightBindGroup!: GPUBindGroup;
+    MAX_LIGHTS = 64;
+
 
     constructor(device: GPUDevice) {
-      // Initialize light uniform buffer and bind group layout
       this.lightUniformBuffer = device.createBuffer({
-        size: 1024, // Adjust size based on your light data structure
+        size: 80 * this.MAX_LIGHTS, // 80 bytes per light (struct size)
         usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
       });
       this.lightBindGroupLayout = device.createBindGroupLayout({
@@ -58,6 +59,7 @@ export class Scene {
         return;
       }
       const vpMatrix = this.camera.getViewProjection();
+      passEncoder.setBindGroup(2, this.lightBindGroup);
   
       for (const mesh of this.meshes) {
         const modelMatrix = mesh.getModelMatrix();
