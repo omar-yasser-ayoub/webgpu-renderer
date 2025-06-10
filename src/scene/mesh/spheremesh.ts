@@ -1,7 +1,7 @@
 import { vec3 } from "wgpu-matrix";
-import { FlatShadingMaterial } from "../material/flatShadingMaterial";
+import { FlatShadingMaterial } from "../material/flatshadingmaterial";
 import type { Material } from "../material/material";
-import { SmoothShadingMaterial } from "../material/smoothShadingMaterial";
+import { SmoothShadingMaterial } from "../material/smoothshadingmaterial";
 import { Mesh } from "./mesh";
 
 enum ShadingType {

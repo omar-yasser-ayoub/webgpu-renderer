@@ -29,7 +29,7 @@ export class Renderer {
         }]
       });
   
-      this.scene.render(passEncoder, this.camera, this.device);
+      this.scene.render(passEncoder, this.device);
   
       passEncoder.end();
       this.device.queue.submit([commandEncoder.finish()]);

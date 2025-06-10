@@ -7,6 +7,7 @@ import { quat, vec3, type Vec3, vec4 } from 'wgpu-matrix';
 import { initRenderer } from './core/renderer';
 import "./app.css";
 import { SphereMesh } from './scene/mesh/spheremesh';
+import { FlatShadingMaterial } from './scene/material/flatshadingmaterial';
 import { NormalMaterial } from './scene/material/normalMaterial';
 
 function App() {
@@ -32,6 +33,7 @@ function App() {
       vec3.create(0, 1, 0), 
     );    
 
+    scene.add(camera);
     let animationFrameId: number;
     rendererRef.current = await initRenderer(canvas, scene, camera);
 
@@ -52,7 +54,7 @@ function App() {
       mesh.setScale(vec3.create(0.5, 0.5, 0.5));
       scene.add(mesh);
 
-      const material2 = new NormalMaterial(rendererRef.current.device); // red color
+      const material2 = new FlatShadingMaterial(rendererRef.current.device); // red color
       const mesh2 = new SphereMesh(rendererRef.current.device, material2);
       mesh2.setPosition(vec3.create(-1, 0, 0));
       mesh2.setScale(vec3.create(0.5, 0.5, 0.5));
@@ -62,9 +64,9 @@ function App() {
     function renderLoop() {
       rendererRef.current?.renderFrame();
       animationFrameId = requestAnimationFrame(renderLoop);
-      sin = Math.sin(animationFrameId/100)/8
-      mesh.setRotation(vec3.create(0, animationFrameId/5, 0));
-      mesh.setPosition(vec3.create(0, sin, 0))
+      // sin = Math.sin(animationFrameId/100)/8
+      // mesh.setRotation(vec3.create(0, animationFrameId/5, 0));
+      // mesh.setPosition(vec3.create(0, sin, 0))
     }
     renderLoop();
 

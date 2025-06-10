@@ -1,12 +1,26 @@
 import { Mesh } from './mesh/mesh';
 import { Camera } from './camera';
 import { mat4 } from 'wgpu-matrix';
+import { SceneObject } from './sceneobject';
 export class Scene {
     meshes: Mesh[] = [];
-    add(mesh: Mesh) { this.meshes.push(mesh); }
+    camera!: Camera;
+    add(object: SceneObject) { 
+      if (object instanceof Camera) {
+        this.camera = object;
+        return;
+      }
+      if (object instanceof Mesh) {
+        this.meshes.push(object); 
+      }
+    }
 
-    render(passEncoder: GPURenderPassEncoder, camera: Camera, device: GPUDevice) {
-      const vpMatrix = camera.getViewProjection();
+    render(passEncoder: GPURenderPassEncoder, device: GPUDevice) {
+      if (!this.camera) {
+        console.error('Camera not set in scene');
+        return;
+      }
+      const vpMatrix = this.camera.getViewProjection();
   
       for (const mesh of this.meshes) {
         const modelMatrix = mesh.getModelMatrix();

@@ -1,10 +1,12 @@
 import { mat4, type Mat4, type Vec3 } from "wgpu-matrix";
+import { SceneObject } from "./sceneobject";
 
-export class Camera {
+export class Camera extends SceneObject {
     viewMatrix: Mat4;
     projectionMatrix: Mat4;
 
     constructor(fov: number, aspect: number, near: number, far: number) {
+        super();
         this.projectionMatrix = mat4.perspective(fov, aspect, near, far);
         this.viewMatrix = mat4.identity(); // default until lookAt() is called
     }
