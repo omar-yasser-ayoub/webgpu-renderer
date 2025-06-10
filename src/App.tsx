@@ -10,6 +10,7 @@ import { SphereMesh } from './scene/mesh/spheremesh';
 import { FlatShadingMaterial } from './scene/material/flatshadingmaterial';
 import { NormalMaterial } from './scene/material/normalmaterial';
 import { SmoothShadingMaterial } from './scene/material/smoothshadingmaterial';
+import { PointLight } from './scene/light/pointlight';
 
 function App() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -44,7 +45,23 @@ function App() {
       vec3.create(0, 1, 0), 
     );    
 
+    const pointlight = new PointLight(
+      vec3.create(0, 5, 0), // position
+      vec3.create(1, 1, 1), // color
+      1.0, // intensity
+      10.0 // range
+    );
+
+    const pointlight2 = new PointLight(
+      vec3.create(5, 0, 0), // position
+      vec3.create(1, 1, 1), // color
+      1.0, // intensity
+      10.0 // range
+    );
+
     scene.add(camera);
+    scene.add(pointlight);
+    scene.add(pointlight2);
     
     //initialize all meshes, materials, etc here!
     const material = new SmoothShadingMaterial(rendererRef.current.device); // red color

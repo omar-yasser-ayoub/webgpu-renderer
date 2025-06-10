@@ -1,5 +1,4 @@
 import { Scene } from '../scene/scene';
-import { Camera } from '../scene/camera';
 
 export class Renderer {
     device: GPUDevice;
