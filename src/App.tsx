@@ -56,8 +56,8 @@ function App() {
     function renderLoop() {
       rendererRef.current?.renderFrame();
       animationFrameId = requestAnimationFrame(renderLoop);
-      sin = Math.sin(animationFrameId/400)/8
-      mesh.setRotation(vec3.create(0, animationFrameId/15, 0));
+      sin = Math.sin(animationFrameId/100)/8
+      mesh.setRotation(vec3.create(0, animationFrameId/5, 0));
       mesh.setPosition(vec3.create(0, sin, 0))
     }
     renderLoop();

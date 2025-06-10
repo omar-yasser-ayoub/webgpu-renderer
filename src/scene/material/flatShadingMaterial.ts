@@ -1,7 +1,7 @@
 import { Material } from './material';
 import { Pipeline } from '../../core/pipeline';
 
-export class HelloWorldMaterial extends Material {
+export class FlatShadingMaterial extends Material {
   constructor(device: GPUDevice) {
     const shaderModule = device.createShaderModule({
       code: `
@@ -45,7 +45,7 @@ export class HelloWorldMaterial extends Material {
     });
 
     const pipelineLayout = device.createPipelineLayout({
-      label: 'HelloWorldMaterial Pipeline Layout',
+      label: 'SmoothShadingMaterial Pipeline Layout',
       bindGroupLayouts: [
         meshBindGroupLayout,      // group 0
       ],

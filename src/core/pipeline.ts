@@ -8,7 +8,6 @@ export interface PipelineDescriptor {
     primitiveTopology?: GPUPrimitiveTopology;
     cullMode?: GPUCullMode;
     targets?: GPUColorTargetState[];
-    vertexBuffers?: GPUVertexBufferLayout[];
 }
 
 export class Pipeline {
@@ -22,8 +21,8 @@ export class Pipeline {
     primitiveTopology: GPUPrimitiveTopology;
     cullMode: GPUCullMode;
     targets: GPUColorTargetState[];
-    vertexBuffers: GPUVertexBufferLayout[];
     pipeline: GPURenderPipeline;
+    vertexBuffers: GPUVertexBufferLayout[];
 
 
     constructor(pipelineDescriptor: PipelineDescriptor) {
@@ -37,7 +36,6 @@ export class Pipeline {
           primitiveTopology = 'triangle-list',
           cullMode = 'back',
           targets,
-          vertexBuffers = []
         } = pipelineDescriptor;
       
         this.device = device;

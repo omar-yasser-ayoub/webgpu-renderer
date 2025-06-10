@@ -104,18 +104,6 @@ export class BasicMaterial extends Material {
           alpha: { operation: 'add', srcFactor: 'one', dstFactor: 'zero' }
         }
       }],
-      vertexBuffers: [
-        {
-          arrayStride: 12,
-          attributes: [
-            {
-              shaderLocation: 0,
-              offset: 0,
-              format: 'float32x3'
-            }
-          ]
-        }
-      ]
     });
 
     super(pipeline, bindGroupLayout, bindGroup, uniformBuffer);
