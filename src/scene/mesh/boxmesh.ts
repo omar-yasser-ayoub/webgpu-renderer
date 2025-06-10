@@ -13,7 +13,6 @@ export class BoxMesh extends Mesh {
     
     constructor(device: GPUDevice, material: Material) {
         super(device, material);
-        this.shading = ShadingType.SMOOTH;
         if (material instanceof FlatShadingMaterial) {
             this.shading = ShadingType.FLAT;
         }

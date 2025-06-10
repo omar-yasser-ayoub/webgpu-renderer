@@ -8,6 +8,7 @@ import { initRenderer } from './core/renderer';
 import "./app.css";
 import { HelloWorldMaterial } from './scene/material/helloworldmaterial';
 import { BasicMaterial } from './scene/material/basicmateral';
+import { SphereMesh } from './scene/mesh/spheremesh';
 function App() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const rendererRef = useRef<Renderer | null>(null);
@@ -45,10 +46,9 @@ function App() {
     }
     else {
       //initialize all meshes, materials, etc here!
-      const material = new BasicMaterial(rendererRef.current.device, new Float32Array([1,1,1,1])); // red color
-      mesh = new BoxMesh(rendererRef.current.device, material);
-      mesh.setPosition(vec3.create(0.7, 0, 0));
-      mesh.setRotation(vec3.create(0, x, 0))
+      const material = new HelloWorldMaterial(rendererRef.current.device); // red color
+      mesh = new SphereMesh(rendererRef.current.device, material);
+      mesh.setPosition(vec3.create(0, 0, 0));
       mesh.setScale(vec3.create(0.5, 0.5, 0.5));
       scene.add(mesh);
     }
