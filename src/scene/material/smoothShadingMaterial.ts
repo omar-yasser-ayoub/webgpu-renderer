@@ -7,6 +7,8 @@ export class SmoothShadingMaterial extends Material {
       code: `
         struct VertexInput {
           @location(0) position : vec3<f32>,
+          @location(1) normal : vec3<f32>,
+          @location(2) uv : vec2<f32>,
         }
     
         struct VertexOutput {
@@ -21,9 +23,8 @@ export class SmoothShadingMaterial extends Material {
         fn vertex(input: VertexInput) -> VertexOutput {
           var output: VertexOutput;
           output.position = mvpMatrix * vec4<f32>(input.position, 1.0);
-    
-          // Procedural RGB based on position
-          output.color = vec4<f32>((input.position + vec3<f32>(1.0)) * 0.5, 1.0);
+
+          output.color = vec4<f32>(input.normal * 0.5 + vec3<f32>(0.5), 1.0);
           return output;
         }
     

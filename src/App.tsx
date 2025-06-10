@@ -6,9 +6,9 @@ import { BoxMesh } from './scene/mesh/boxmesh';
 import { quat, vec3, type Vec3, vec4 } from 'wgpu-matrix';
 import { initRenderer } from './core/renderer';
 import "./app.css";
-import { HelloWorldMaterial } from './scene/material/helloworldmaterial';
-import { BasicMaterial } from './scene/material/basicmateral';
 import { SphereMesh } from './scene/mesh/spheremesh';
+import { NormalMaterial } from './scene/material/normalMaterial';
+
 function App() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const rendererRef = useRef<Renderer | null>(null);
@@ -46,11 +46,17 @@ function App() {
     }
     else {
       //initialize all meshes, materials, etc here!
-      const material = new HelloWorldMaterial(rendererRef.current.device); // red color
+      const material = new NormalMaterial(rendererRef.current.device); // red color
       mesh = new SphereMesh(rendererRef.current.device, material);
       mesh.setPosition(vec3.create(0, 0, 0));
       mesh.setScale(vec3.create(0.5, 0.5, 0.5));
       scene.add(mesh);
+
+      const material2 = new NormalMaterial(rendererRef.current.device); // red color
+      const mesh2 = new SphereMesh(rendererRef.current.device, material2);
+      mesh2.setPosition(vec3.create(-1, 0, 0));
+      mesh2.setScale(vec3.create(0.5, 0.5, 0.5));
+      scene.add(mesh2);
     }
 
     function renderLoop() {

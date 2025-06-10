@@ -69,7 +69,7 @@ export class SphereMesh extends Mesh {
                     // First triangle: p1, p2, p3
                     const u1 = vec3.subtract(p2, p1);
                     const v1 = vec3.subtract(p3, p1);
-                    const normal1 = vec3.normalize(vec3.cross(u1, v1));
+                    const normal1 = vec3.normalize(vec3.cross(v1, u1));
         
                     const baseIndex1 = vertices.length / 10;
                     
@@ -90,7 +90,7 @@ export class SphereMesh extends Mesh {
                     // Second triangle: p2, p4, p3
                     const u2 = vec3.subtract(p4, p2);
                     const v2 = vec3.subtract(p3, p2);
-                    const normal2 = vec3.normalize(vec3.cross(u2, v2));
+                    const normal2 = vec3.normalize(vec3.cross(v2, u2));
         
                     const baseIndex2 = vertices.length / 10;
         
