@@ -5,15 +5,16 @@ export class Renderer {
     device: GPUDevice;
     context: GPUCanvasContext;
     textureFormat: GPUTextureFormat;
-    scene: Scene;
-    camera: Camera;
+    scene!: Scene;
   
-    constructor(scene: Scene, camera: Camera, device: GPUDevice, context: GPUCanvasContext, textureFormat: GPUTextureFormat) {
+    constructor(device: GPUDevice, context: GPUCanvasContext, textureFormat: GPUTextureFormat) {
       this.device = device;
       this.context = context;
       this.textureFormat = textureFormat;
+    }
+
+    setScene(scene: Scene) {
       this.scene = scene;
-      this.camera = camera;
     }
   
     renderFrame() {
@@ -28,15 +29,15 @@ export class Renderer {
           storeOp: 'store',
         }]
       });
-  
-      this.scene.render(passEncoder, this.device);
-  
+      if (this.scene){
+        this.scene.render(passEncoder, this.device);
+      }
       passEncoder.end();
       this.device.queue.submit([commandEncoder.finish()]);
     }
 }
 
-export async function initRenderer(canvas: HTMLCanvasElement, scene: Scene, camera: Camera) {
+export async function initRenderer(canvas: HTMLCanvasElement) {
 
     // create adapter and device manually:
     const adapter = await navigator.gpu.requestAdapter();
@@ -54,7 +55,7 @@ export async function initRenderer(canvas: HTMLCanvasElement, scene: Scene, came
     });
 
     // Create renderer instance with these
-    const renderer = new Renderer(scene, camera, device, context, format);
+    const renderer = new Renderer(device, context, format);
 
     return renderer;
 }

@@ -45,11 +45,47 @@ export class SmoothShadingMaterial extends Material {
       ],
     });
 
+    const materialBindGroupLayout = device.createBindGroupLayout({
+      entries: [
+        {
+          binding: 0,
+          visibility: GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT,
+          buffer: { type: 'uniform' },
+        },
+      ],
+    })
+    const lightBindGroupLayout = device.createBindGroupLayout({
+      entries: [
+        {
+          binding: 0,
+          visibility: GPUShaderStage.FRAGMENT,
+          buffer: { type: 'uniform' },
+        },
+      ],
+    });
+
     const pipelineLayout = device.createPipelineLayout({
       label: 'SmoothShadingMaterial Pipeline Layout',
       bindGroupLayouts: [
-        meshBindGroupLayout,      // group 0
+        meshBindGroupLayout,
+        materialBindGroupLayout,
+        lightBindGroupLayout
       ],
+    });
+
+    const buffer = device.createBuffer({
+      size: 16,
+      usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
+    })
+
+    const bindGroup = device.createBindGroup({
+      layout: materialBindGroupLayout,
+      entries: [{
+        binding: 0,
+        resource: {
+          buffer: buffer
+        },
+      }],
     });
 
     const pipeline = new Pipeline({
@@ -71,6 +107,10 @@ export class SmoothShadingMaterial extends Material {
       }],
     });
 
-    super(pipeline);
+    super(pipeline, materialBindGroupLayout, bindGroup, buffer);
+
+    this.uniformBuffer = buffer;
+    this.bindGroupLayout = materialBindGroupLayout;
+    this.bindGroup = bindGroup;
   }
 }

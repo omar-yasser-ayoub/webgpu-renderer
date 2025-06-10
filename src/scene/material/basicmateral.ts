@@ -60,7 +60,7 @@ export class BasicMaterial extends Material {
       ],
   });
 
-    const bindGroupLayout = device.createBindGroupLayout({
+    const materialBindGroupLayout = device.createBindGroupLayout({
       entries: [{
         binding: 0,
         visibility: GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT,
@@ -72,13 +72,13 @@ export class BasicMaterial extends Material {
       label: 'BasicMaterial Pipeline Layout',
       bindGroupLayouts: [
         meshBindGroupLayout,      // group 0
-        bindGroupLayout,  // group 1
+        materialBindGroupLayout,  // group 1
       ],
     });
 
     const bindGroup = device.createBindGroup({
       label: 'BasicMaterial Bind Group',
-      layout: bindGroupLayout,
+      layout: materialBindGroupLayout,
       entries: [{
         binding: 0,
         resource: {
@@ -106,11 +106,11 @@ export class BasicMaterial extends Material {
       }],
     });
 
-    super(pipeline, bindGroupLayout, bindGroup, uniformBuffer);
+    super(pipeline, materialBindGroupLayout, bindGroup, uniformBuffer);
 
     this.color = color;
     this.uniformBuffer = uniformBuffer;
-    this.bindGroupLayout = bindGroupLayout;
+    this.bindGroupLayout = materialBindGroupLayout;
     this.bindGroup = bindGroup;
 
     // Initialize uniform buffer with default color

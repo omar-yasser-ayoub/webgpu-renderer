@@ -9,6 +9,7 @@ import "./app.css";
 import { SphereMesh } from './scene/mesh/spheremesh';
 import { FlatShadingMaterial } from './scene/material/flatshadingmaterial';
 import { NormalMaterial } from './scene/material/normalmaterial';
+import { SmoothShadingMaterial } from './scene/material/smoothshadingmaterial';
 
 function App() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -23,8 +24,19 @@ function App() {
     canvas.width = canvas.clientWidth * devicePixelRatio;
     canvas.height = canvas.clientHeight * devicePixelRatio;
 
+    rendererRef.current = await initRenderer(canvas);
+    if (!rendererRef.current) {
+      console.error('Renderer initialization failed');
+      return;
+    }
+
     // Create your scene and camera here
-    const scene = new Scene();
+    const scene = new Scene(rendererRef.current.device);
+
+
+    rendererRef.current.setScene(scene);
+
+
     const camera = new Camera(Math.PI / 5, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
 
     camera.lookAt(
@@ -35,31 +47,20 @@ function App() {
 
     scene.add(camera);
     let animationFrameId: number;
-    rendererRef.current = await initRenderer(canvas, scene, camera);
+    
+    //initialize all meshes, materials, etc here!
+    const material = new SmoothShadingMaterial(rendererRef.current.device); // red color
+    const mesh = new SphereMesh(rendererRef.current.device, material);
+    mesh.setPosition(vec3.create(0, 0, 0));
+    mesh.setScale(vec3.create(0.5, 0.5, 0.5));
+    scene.add(mesh);
 
-    let x = 0;
+    const material2 = new FlatShadingMaterial(rendererRef.current.device); // red color
+    const mesh2 = new SphereMesh(rendererRef.current.device, material2);
+    mesh2.setPosition(vec3.create(-1, 0, 0));
+    mesh2.setScale(vec3.create(0.5, 0.5, 0.5));
+    scene.add(mesh2);
 
-    let mesh: BoxMesh;
-
-    let sin: number;
-    if (!rendererRef.current) {
-      console.error('Renderer initialization failed');
-      return;
-    }
-    else {
-      //initialize all meshes, materials, etc here!
-      const material = new NormalMaterial(rendererRef.current.device); // red color
-      mesh = new SphereMesh(rendererRef.current.device, material);
-      mesh.setPosition(vec3.create(0, 0, 0));
-      mesh.setScale(vec3.create(0.5, 0.5, 0.5));
-      scene.add(mesh);
-
-      const material2 = new FlatShadingMaterial(rendererRef.current.device); // red color
-      const mesh2 = new SphereMesh(rendererRef.current.device, material2);
-      mesh2.setPosition(vec3.create(-1, 0, 0));
-      mesh2.setScale(vec3.create(0.5, 0.5, 0.5));
-      scene.add(mesh2);
-    }
 
     function renderLoop() {
       rendererRef.current?.renderFrame();
