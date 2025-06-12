@@ -1,5 +1,5 @@
 import type { Material } from "../material/material";
-import { mat4, quat, vec3, type Vec3, type Quat, type Mat4 } from 'wgpu-matrix';
+import { mat4, quat, vec3, type Vec3, type Quat, type Mat4, type Mat3 } from 'wgpu-matrix';
 import { SceneObject } from "../sceneobject";
 export abstract class Mesh extends SceneObject {
     vertexBuffer!: GPUBuffer;
@@ -19,7 +19,7 @@ export abstract class Mesh extends SceneObject {
     constructor(device: GPUDevice, material: Material) {
         super();
         this.uniformBuffer = device.createBuffer({
-            size: 64,
+            size: 64 * 4, // 192 bytes for a 4x4 matrix (16 floats) * 3 matrices (model, view, projection, normal)
             usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
         })
 
@@ -49,8 +49,11 @@ export abstract class Mesh extends SceneObject {
         this.material = material;
     }
 
-    updateUniforms(device: GPUDevice, mvpMatrix: Float32Array) {
-        device.queue.writeBuffer(this.uniformBuffer, 0, mvpMatrix.buffer, mvpMatrix.byteOffset, mvpMatrix.byteLength);
+    updateUniforms(device: GPUDevice, modelMatrix: Mat4, viewMatrix: Mat4, projectionMatrix: Mat4, normalMatrix: Mat3) {
+        device.queue.writeBuffer(this.uniformBuffer, 0, modelMatrix.buffer, modelMatrix.byteOffset, modelMatrix.byteLength);
+        device.queue.writeBuffer(this.uniformBuffer, 64, viewMatrix.buffer, viewMatrix.byteOffset, viewMatrix.byteLength);
+        device.queue.writeBuffer(this.uniformBuffer, 128, projectionMatrix.buffer, projectionMatrix.byteOffset, projectionMatrix.byteLength);
+        device.queue.writeBuffer(this.uniformBuffer, 192, normalMatrix.buffer, normalMatrix.byteOffset, normalMatrix.byteLength);
     }
 
     markDirty() {

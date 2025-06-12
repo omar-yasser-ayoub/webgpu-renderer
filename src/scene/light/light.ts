@@ -1,17 +1,7 @@
 import { SceneObject } from "../sceneobject";
-import { type Vec4 } from 'wgpu-matrix';
+import { type Vec3, type Vec4 } from 'wgpu-matrix';
 
 export abstract class Light extends SceneObject {
-    //Structure in buffer
-    // struct Light {
-    //     position: vec3<f32>, //12 bytes
-    //     range: f32, //4 bytes
-    //     direction: vec3<f32>, //12 bytes
-    //     intensity: f32, // 4 bytes
-    //     color: vec3<f32>, // 12 bytes
-    //     lightType: u32, //4 bytes
-    // };
-
     type: number; // 0: Point, 1: Directional, 2: Ambient
     color: Vec4;
     intensity: number;
@@ -25,4 +15,18 @@ export abstract class Light extends SceneObject {
         this.color = color;
         this.intensity = intensity;
     }
+    setColor(color: Vec4): void {
+        this.color = color;
+    }
+    getColor(): Vec4 {
+        return this.color;
+    }
+
+    setIntensity(intensity: number): void {
+        this.intensity = intensity;
+    }
+    getIntensity(): number {
+        return this.intensity;
+    }
+
 }

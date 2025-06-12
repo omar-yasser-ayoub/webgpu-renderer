@@ -11,6 +11,8 @@ import { FlatShadingMaterial } from './scene/material/flatshadingmaterial';
 import { NormalMaterial } from './scene/material/normalmaterial';
 import { SmoothShadingMaterial } from './scene/material/smoothshadingmaterial';
 import { PointLight } from './scene/light/pointlight';
+import { AmbientLight } from './scene/light/ambientlight';
+import DirectionalLight from './scene/light/directionallight';
 
 function App() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -46,22 +48,37 @@ function App() {
     );    
 
     const pointlight = new PointLight(
-      vec3.create(0, 5, 0), // position
-      vec3.create(1, 1, 1), // color
+      vec3.create(0, 0, -2), // position
+      vec3.create(0, 1, 1), // color
+      1.5, // intensity
+      10.0 // range
+    );
+
+
+    const pointlight2 = new PointLight(
+      vec3.create(-5, 5, 0), // position
+      vec3.create(1, 0, 1), // color
       1.0, // intensity
       10.0 // range
     );
 
-    const pointlight2 = new PointLight(
-      vec3.create(5, 0, 0), // position
+    const ambientLight = new AmbientLight(
+      vec3.create(1.0, 0.1, 0.1), // color
+      0.15 // intensity
+    )
+
+    const directionalLight = new DirectionalLight(
+      vec3.create(-1, -1, 0), // direction
       vec3.create(1, 1, 1), // color
-      1.0, // intensity
-      10.0 // range
-    );
+      0.3, // intensity
+    )
+
 
     scene.add(camera);
     scene.add(pointlight);
     scene.add(pointlight2);
+    scene.add(ambientLight);
+    scene.add(directionalLight);
     
     //initialize all meshes, materials, etc here!
     const material = new SmoothShadingMaterial(rendererRef.current.device); // red color
@@ -70,20 +87,23 @@ function App() {
     mesh.setScale(vec3.create(0.5, 0.5, 0.5));
     scene.add(mesh);
 
-    const material2 = new FlatShadingMaterial(rendererRef.current.device); // red color
-    const mesh2 = new SphereMesh(rendererRef.current.device, material2);
-    mesh2.setPosition(vec3.create(-1, 0, 0));
-    mesh2.setScale(vec3.create(0.5, 0.5, 0.5));
-    scene.add(mesh2);
+    // const material2 = new SmoothShadingMaterial(rendererRef.current.device); // red color
+    // const mesh2 = new SphereMesh(rendererRef.current.device, material2);
+    // mesh2.setPosition(vec3.create(-1, -1, -1));
+    // mesh2.setScale(vec3.create(0.5, 0.5, 0.5));
+    // scene.add(mesh2);
 
     
     let animationFrameId: number;
+    let sin = 0;
+    let cos = 0;
     function renderLoop() {
       rendererRef.current?.renderFrame();
       animationFrameId = requestAnimationFrame(renderLoop);
-      // sin = Math.sin(animationFrameId/100)/8
-      // mesh.setRotation(vec3.create(0, animationFrameId/5, 0));
-      // mesh.setPosition(vec3.create(0, sin, 0))
+      sin = Math.sin(animationFrameId/100)/8
+      cos = Math.cos(animationFrameId/100)/8;
+      pointlight.setPosition(vec3.create(sin * 5, cos * 5, 0));
+      pointlight2.setPosition(vec3.create(sin * 5, -cos * 5, 0));
     }
     renderLoop();
 

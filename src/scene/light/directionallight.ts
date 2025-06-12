@@ -5,4 +5,10 @@ export default class DirectionalLight extends Light {
         super(1, color, intensity);
         this.direction = direction;
     }
+    getDirection(): Float32Array {
+        return this.direction;
+    }
+    setDirection(direction: Float32Array): void {
+        this.direction = direction;
+    }
 }

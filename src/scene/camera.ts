@@ -18,4 +18,12 @@ export class Camera extends SceneObject {
     getViewProjection(): Mat4 {
         return mat4.multiply(this.projectionMatrix, this.viewMatrix);
     }
+
+    getProjection(): Mat4 {
+        return this.projectionMatrix;
+    }
+    
+    getView(): Mat4 {
+        return this.viewMatrix;
+    }
 }

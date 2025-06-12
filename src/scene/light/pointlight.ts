@@ -6,4 +6,17 @@ export class PointLight extends Light {
         this.position = position;
         this.range = range;
     }
+    
+    getPosition(): Float32Array {
+        return this.position;
+    }
+    getRange(): number {
+        return this.range;
+    }
+    setPosition(position: Float32Array): void {
+        this.position = position;
+    }
+    setRange(range: number): void {
+        this.range = range;
+    }
 }
