@@ -86,13 +86,6 @@ function App() {
     mesh.setPosition(vec3.create(0, 0, 0));
     mesh.setScale(vec3.create(0.5, 0.5, 0.5));
     scene.add(mesh);
-
-    // const material2 = new SmoothShadingMaterial(rendererRef.current.device); // red color
-    // const mesh2 = new SphereMesh(rendererRef.current.device, material2);
-    // mesh2.setPosition(vec3.create(-1, -1, -1));
-    // mesh2.setScale(vec3.create(0.5, 0.5, 0.5));
-    // scene.add(mesh2);
-
     
     let animationFrameId: number;
     let sin = 0;
